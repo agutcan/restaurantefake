@@ -336,28 +336,6 @@ Página de entrada con tres opciones:
 
 ---
 
-## 🌍 Localización
-
-Todos los textos de la UI están en **español** con acentos correctos. Además, los estados internos del API se traducen automáticamente:
-
-**En app.js:**
-```javascript
-// Traducción de estados de orden
-pending → Pendiente
-paid → Pagado
-
-// Traducción de estados de pago
-approved → Aprobado
-
-// Traducción de métodos de pago
-cash → Efectivo
-card → Tarjeta
-```
-
-Esto permite mantener la API en inglés (buena práctica) mientras el usuario ve todo en español.
-
----
-
 ## ⚙️ Configuración
 
 ### Variables de Entorno (docker-compose.yml)
@@ -367,43 +345,6 @@ DATABASE_URL: postgresql+psycopg2://app_user:app_pass@db:5432/restaurante
 ```
 
 Para cambiar la contraseña de la base de datos, edita el `docker-compose.yml` en ambos servicios (`db` y `api`).
-
----
-
-## 🔧 Troubleshooting
-
-### "Not Found" al acceder a la web
-**Solución:** Verifica que el Dockerfile copia los archivos HTML, CSS y JS:
-```dockerfile
-COPY *.html ./
-COPY *.css ./
-COPY *.js ./
-```
-
-### API devuelve 404 para `/dishes`
-**Solución:** El mounting de `StaticFiles` debe estar **al final** de `main.py`, después de todos los endpoints.
-
-### Conexión rechazada a PostgreSQL
-**Solución:** Verifica que el servicio `db` está sano:
-```bash
-docker-compose logs db
-docker-compose ps
-```
-
-### Puerto 80 en uso
-**Solución:** Cambia el puerto en `docker-compose.yml`:
-```yaml
-ports:
-  - "8080:8000"  # Usa http://localhost:8080
-```
-
-### API Base URL incorrecta
-El `app.js` usa automáticamente el dominio del servidor:
-```javascript
-const API_BASE = `${window.location.protocol}//${window.location.host}`;
-```
-
-Funciona tanto en local (`localhost`) como en producción (tu DNS de EC2).
 
 ---
 
@@ -462,20 +403,6 @@ Este proyecto fue desarrollado como un sistema completo de gestión digital de r
 1. Se creó el modelo de datos (Dish, Order, OrderItem, Payment)
 2. Se implementaron endpoints REST con lógica de negocio
 3. Se creó frontend con 4 páginas HTML (portal, menú, pedidos, pagos)
-4. Se tradujo toda la UI al español incluyendo estados internos
-5. Se configuró Docker para ambiente aislado
-6. Se preparó para despliegue en AWS EC2
+4. Se configuró Docker para ambiente aislado
+5. Se preparó para despliegue en AWS EC2
 
----
-
-## 📝 Licencia
-
-Este proyecto es de código abierto. Siéntete libre de usarlo y modificarlo.
-
----
-
-## 👨‍💻 Soporte
-
-Para reportar bugs o sugerir mejoras, abre un issue en el repositorio.
-
-**¡Buen provecho!** 🍴
