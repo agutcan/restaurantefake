@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16
+    container_name: restaurante_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: restaurante
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d restaurante"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: restaurante_api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg2://app_user:app_pass@db:5432/restaurante
+    ports:
+      - "8001:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

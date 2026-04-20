@@ -1,0 +1,334 @@
+:root {
+  --bg: #f3efe8;
+  --bg-2: #e7dccb;
+  --text: #1a1917;
+  --surface: #fffdf8;
+  --line: #221f1a;
+  --primary: #d94f04;
+  --mint: #2b9f8a;
+  --blue: #265d97;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at 85% 8%, #ffe2c4 0%, transparent 24%),
+    radial-gradient(circle at 10% 96%, #ccebe5 0%, transparent 22%),
+    linear-gradient(125deg, var(--bg), var(--bg-2));
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.2rem 1rem 2.4rem;
+}
+
+.hero {
+  border: 3px solid var(--line);
+  border-radius: 24px;
+  background: linear-gradient(150deg, #fffaf2, #fff3df);
+  padding: 1.2rem;
+  box-shadow: 8px 8px 0 var(--line);
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  font-size: clamp(1.5rem, 4vw, 2.6rem);
+  font-weight: 800;
+}
+
+.hero p {
+  margin: 0.45rem 0 0;
+  max-width: 62ch;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.nav a,
+.nav button,
+button,
+.link-button {
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--text);
+  padding: 0.55rem 0.9rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+button.primary,
+.nav a.primary,
+.link-button.primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+button.secondary,
+.nav a.secondary,
+.link-button.secondary {
+  background: var(--blue);
+  color: #fff;
+}
+
+.layout {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1rem;
+}
+
+.card {
+  border: 3px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 7px 7px 0 var(--line);
+  padding: 1rem;
+}
+
+.card h2 {
+  margin: 0 0 0.8rem;
+  font-family: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  font-size: 1.25rem;
+}
+
+.grid-dishes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.7rem;
+}
+
+.dish {
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 0.75rem;
+  background: #fff;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.dish strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.dish small {
+  display: block;
+  opacity: 0.8;
+}
+
+.price {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.dish-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.dish-control input,
+.pay-form select,
+.pay-form input,
+.order-search input {
+  width: 100%;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  padding: 0.45rem;
+  font: inherit;
+  background: #fff;
+}
+
+.dish-control input {
+  width: 78px;
+}
+
+.side-col {
+  display: grid;
+  gap: 1rem;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  border: 2px dashed var(--line);
+  border-radius: 12px;
+  padding: 0.55rem 0.65rem;
+  margin-bottom: 0.55rem;
+  background: #fffefb;
+}
+
+.chip {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--primary);
+  margin-right: 0.3rem;
+}
+
+.chip.ok {
+  background: var(--mint);
+}
+
+.panel {
+  margin-top: 1rem;
+}
+
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pay-box {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 0.6rem;
+}
+
+.pay-item {
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 0.65rem;
+  background: #fff;
+}
+
+.pay-item b {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.pay-form {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(100px, 1fr));
+  gap: 0.6rem;
+}
+
+.pay-form .span-2 {
+  grid-column: span 2;
+}
+
+.msg {
+  margin-top: 0.8rem;
+  border: 2px dashed var(--line);
+  border-radius: 12px;
+  padding: 0.65rem;
+  background: #fffefb;
+  min-height: 46px;
+}
+
+.mini {
+  opacity: 0.8;
+  font-size: 0.85rem;
+}
+
+.order-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.order-item {
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  padding: 0.8rem;
+}
+
+.order-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.order-lines {
+  margin: 0.7rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order-lines li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(34, 31, 26, 0.12);
+}
+
+.status-ok {
+  color: var(--mint);
+  font-weight: 700;
+}
+
+.status-pending {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.home-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.home-card {
+  border: 3px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 7px 7px 0 var(--line);
+  padding: 1rem;
+}
+
+.home-card h2 {
+  margin-top: 0;
+}
+
+@media (max-width: 920px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .pay-box,
+  .pay-form {
+    grid-template-columns: 1fr;
+  }
+
+  .pay-form .span-2 {
+    grid-column: auto;
+  }
+}

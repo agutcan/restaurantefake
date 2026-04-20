@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menú digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <h1>Menú digital + datos de platos</h1>
+        <p>Consulta el menú real desde la API y revisa nombre, categoría, descripción y precio.</p>
+        <nav class="nav">
+          <a class="secondary" href="index.html">Inicio</a>
+          <a class="primary" href="pedidos.html">Ir a pedidos</a>
+          <a class="secondary" href="pagos.html">Ir a pagos</a>
+        </nav>
+      </header>
+
+      <section class="layout">
+        <article class="card">
+          <h2>Platos disponibles</h2>
+          <div class="grid-dishes" id="dishesGrid">
+            <div class="dish">Cargando platos...</div>
+          </div>
+          <div class="actions">
+            <button class="primary" id="reloadBtn">Recargar menú</button>
+          </div>
+          <div class="msg" id="statusMsg">Esperando datos del servidor.</div>
+        </article>
+
+        <aside class="side-col">
+          <article class="card">
+            <h2>Datos del menú</h2>
+            <ul class="list">
+              <li><span class="chip">DB</span> Los platos vienen de PostgreSQL a través de la API.</li>
+              <li><span class="chip ok">API</span> La pantalla se actualiza con fetch sin recargar toda la página.</li>
+              <li><span class="chip">UI</span> Solo muestra información: nombre, categoría, descripción y precio.</li>
+            </ul>
+          </article>
+        </aside>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+      const dishesGrid = document.getElementById("dishesGrid");
+      const reloadBtn = document.getElementById("reloadBtn");
+      const statusMsg = document.getElementById("statusMsg");
+      let dishes = [];
+
+      function renderDishes() {
+        if (!dishes.length) {
+          dishesGrid.innerHTML = '<div class="dish">No hay platos disponibles.</div>';
+          return;
+        }
+
+        dishesGrid.innerHTML = dishes
+          .map(
+            (dish) => `
+              <div class="dish">
+                <strong>${dish.name}</strong>
+                <small>${dish.description}</small>
+                <small>Categoría: ${dish.category}</small>
+                <span class="price">${RestaurantApp.fmt(dish.price)}</span>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      async function loadDishes() {
+        RestaurantApp.setMessage(statusMsg, "Cargando menú...");
+        try {
+          dishes = await RestaurantApp.apiGet("/dishes");
+          renderDishes();
+          RestaurantApp.setMessage(statusMsg, `Menú cargado con ${dishes.length} platos.`);
+        } catch (error) {
+          dishes = [];
+          renderDishes();
+          RestaurantApp.setMessage(statusMsg, `Error: ${error.message}`);
+        }
+      }
+
+      reloadBtn.addEventListener("click", loadDishes);
+      loadDishes();
+    </script>
+  </body>
+</html>

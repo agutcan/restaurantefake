@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Control de pagos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <h1>Control de pagos</h1>
+        <p>Introduce el pedido, el método de pago y el importe para registrar el cobro real.</p>
+        <nav class="nav">
+          <a class="secondary" href="index.html">Inicio</a>
+          <a class="secondary" href="menu.html">Menú</a>
+          <a class="secondary" href="pedidos.html">Pedidos</a>
+        </nav>
+      </header>
+
+      <section class="layout">
+        <article class="card">
+          <h2>Pago del pedido</h2>
+          <div class="pay-form">
+            <input id="orderIdInput" type="number" min="1" step="1" placeholder="ID del pedido" />
+            <select id="paymentMethod">
+              <option value="cash">Efectivo</option>
+              <option value="card">Tarjeta</option>
+            </select>
+            <input id="amountInput" type="number" min="0" step="0.01" placeholder="Importe pagado" />
+          </div>
+          <div class="actions">
+            <button class="primary" id="loadOrderBtn">Cargar pedido</button>
+            <button class="primary" id="payBtn">Pagar pedido</button>
+          </div>
+          <div class="msg" id="statusMsg">Escribe un ID de pedido para ver el total y pagarlo.</div>
+        </article>
+
+        <aside class="side-col">
+          <article class="card">
+            <h2>Resumen del pedido</h2>
+            <div class="pay-box">
+              <div class="pay-item"><b>Pedido</b><span id="orderInfo">Sin pedido</span></div>
+              <div class="pay-item"><b>Total</b><span id="totalInfo">0.00 €</span></div>
+              <div class="pay-item"><b>Estado</b><span id="paymentStatus">Pendiente</span></div>
+            </div>
+            <p class="mini">Si pagas en efectivo y te sobra dinero, la API devuelve el cambio.</p>
+          </article>
+
+          <article class="card">
+            <h2>Control real</h2>
+            <ul class="list">
+              <li><span class="chip">1</span> Se consulta el pedido por ID.</li>
+              <li><span class="chip">2</span> El sistema comprueba el importe.</li>
+              <li><span class="chip ok">3</span> Se registra el pago en PostgreSQL.</li>
+              <li><span class="chip">4</span> El pedido queda marcado como pagado.</li>
+            </ul>
+          </article>
+        </aside>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+      const orderIdInput = document.getElementById("orderIdInput");
+      const paymentMethod = document.getElementById("paymentMethod");
+      const amountInput = document.getElementById("amountInput");
+      const loadOrderBtn = document.getElementById("loadOrderBtn");
+      const payBtn = document.getElementById("payBtn");
+      const statusMsg = document.getElementById("statusMsg");
+      const orderInfo = document.getElementById("orderInfo");
+      const totalInfo = document.getElementById("totalInfo");
+      const paymentStatus = document.getElementById("paymentStatus");
+      let currentOrder = null;
+
+      async function loadOrder() {
+        const orderId = Number.parseInt(orderIdInput.value, 10);
+        if (!Number.isFinite(orderId) || orderId <= 0) {
+            RestaurantApp.setMessage(statusMsg, "Introduce un ID de pedido válido.");
+          return;
+        }
+
+        try {
+          currentOrder = await RestaurantApp.apiGet(`/orders/${orderId}`);
+          orderInfo.textContent = `#${currentOrder.id}`;
+          totalInfo.textContent = RestaurantApp.fmt(currentOrder.total);
+          paymentStatus.textContent = RestaurantApp.orderStatusLabel(currentOrder.status);
+          amountInput.value = Number(currentOrder.total).toFixed(2);
+          RestaurantApp.setMessage(statusMsg, `Pedido #${currentOrder.id} cargado.`);
+        } catch (error) {
+          currentOrder = null;
+          orderInfo.textContent = "Sin pedido";
+          totalInfo.textContent = "0.00 €";
+          paymentStatus.textContent = "Pendiente";
+          RestaurantApp.setMessage(statusMsg, `Error: ${error.message}`);
+        }
+      }
+
+      async function payOrder() {
+        if (!currentOrder) {
+          RestaurantApp.setMessage(statusMsg, "Primero carga un pedido.");
+          return;
+        }
+
+        const amountPaid = Number(amountInput.value);
+        if (!Number.isFinite(amountPaid) || amountPaid <= 0) {
+          RestaurantApp.setMessage(statusMsg, "Introduce un importe válido.");
+          return;
+        }
+
+        payBtn.disabled = true;
+        try {
+          const payment = await RestaurantApp.apiPost(`/orders/${currentOrder.id}/payments`, {
+            method: paymentMethod.value,
+            amount_paid: amountPaid,
+          });
+          paymentStatus.textContent = RestaurantApp.paymentStatusLabel(payment.status);
+          RestaurantApp.setMessage(
+            statusMsg,
+            `Pago ${RestaurantApp.paymentStatusLabel(payment.status).toLowerCase()}. Método: ${RestaurantApp.paymentMethodLabel(payment.method)}. Cambio: ${RestaurantApp.fmt(payment.change_amount)}.`
+          );
+        } catch (error) {
+          RestaurantApp.setMessage(statusMsg, `Error: ${error.message}`);
+        } finally {
+          payBtn.disabled = false;
+        }
+      }
+
+      loadOrderBtn.addEventListener("click", loadOrder);
+      payBtn.addEventListener("click", payOrder);
+    </script>
+  </body>
+</html>
