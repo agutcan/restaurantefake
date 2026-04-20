@@ -53,3 +53,10 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
 def pay_order(order_id: int, payload: schemas.PaymentCreate, db: Session = Depends(get_db)):
     payment = services.process_payment(db, order_id, payload)
     return payment
+
+
+# Servir archivos estáticos (HTML, CSS, JS) al final
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+static_dir = str(Path(__file__).parent.parent)
+app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")

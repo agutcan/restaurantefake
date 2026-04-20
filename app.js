@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8001";
+const API_BASE = `${window.location.protocol}//${window.location.host}`;
 
 function fmt(value) {
   return `${Number(value).toFixed(2)} €`;
