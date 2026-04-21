@@ -3,39 +3,173 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Restaurante digital</title>
+    <title>Código & Sabor | Menú</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="assets/bootstrap.min.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="container">
-      <header class="hero">
-        <h1>Restaurante digital</h1>
-        <p>Elige una sección para abrir el menú, crear pedidos o controlar pagos reales.</p>
+    <!-- Contenedor general de la página principal -->
+    <div class="app-shell py-3 py-lg-4">
+      <header class="container-aurora">
+        <!-- Navegación principal entre pantallas -->
+        <nav class="navbar navbar-expand-lg navbar-dark aurora-navbar rounded-4 px-3 px-lg-4 py-3">
+          <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.html">
+            <span class="badge rounded-pill badge-soft">Código & Sabor</span>
+            Restaurante
+          </a>
+          <div class="ms-lg-auto d-flex flex-wrap gap-2">
+            <a class="btn btn-aurora-outline btn-sm" href="pedidos.html">Crear pedido</a>
+            <a class="btn btn-aurora-outline btn-sm" href="pagos.html">Control de pagos</a>
+            <a class="btn btn-aurora btn-sm" href="pedidos-estado.html">Tablero de pedidos</a>
+          </div>
+        </nav>
+
+        <!-- Hero: propuesta de valor y accesos rápidos -->
+        <section class="hero-panel mt-4">
+          <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+              <span class="badge rounded-pill badge-soft mb-3">Menú principal</span>
+              <h1 class="hero-title display-4 mb-3">
+                Código & Sabor pensado para operar de forma clara
+              </h1>
+              <p class="lead text-muted-aurora mb-4">
+                Consulta el menú desde la API, crea pedidos, registra pagos y sigue el estado de las órdenes con una
+                pantalla tipo cocina.
+              </p>
+              <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-aurora" href="pedidos.html">Crear pedido</a>
+                <a class="btn btn-aurora-outline" href="pedidos-estado.html">Ver tablero</a>
+                <a class="btn btn-aurora-outline" href="pagos.html">Cobrar pedido</a>
+              </div>
+              <div class="d-flex flex-wrap gap-3 mt-4">
+                <div class="summary-pill">
+                  <strong id="dishCount">0</strong>
+                  <span>platos en el menú</span>
+                </div>
+                <div class="summary-pill">
+                  <strong>FastAPI</strong>
+                  <span>backend y API REST</span>
+                </div>
+                <div class="summary-pill">
+                  <strong>Bootstrap</strong>
+                  <span>interfaz responsive</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-5">
+              <div class="surface-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                  <div>
+                    <h2 class="card-title-aurora h4 mb-1">Flujo de trabajo</h2>
+                    <p class="card-subtitle-aurora mb-0">La portada resume cómo se usa el sistema.</p>
+                  </div>
+                  <span class="badge rounded-pill text-bg-success">Operativo</span>
+                </div>
+                <div class="list-group list-group-flush">
+                  <div class="list-group-item bg-transparent text-light border-secondary-subtle px-0">
+                    1. El menú se lee desde PostgreSQL a través de la API.
+                  </div>
+                  <div class="list-group-item bg-transparent text-light border-secondary-subtle px-0">
+                    2. Se crean pedidos seleccionando cantidades de cada plato.
+                  </div>
+                  <div class="list-group-item bg-transparent text-light border-secondary-subtle px-0">
+                    3. El cobro se registra con efectivo o tarjeta.
+                  </div>
+                  <div class="list-group-item bg-transparent text-light border-secondary-subtle px-0">
+                    4. El tablero final pinta cada pedido con el color de su estado.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </header>
 
-      <section class="home-grid">
-        <article class="home-card">
-          <h2>Menú digital</h2>
-          <p>Consulta platos, categorías, descripciones y precios reales desde PostgreSQL.</p>
-          <a class="link-button primary" href="menu.html">Abrir menú</a>
-        </article>
-        <article class="home-card">
-          <h2>Automatización de pedidos</h2>
-          <p>Selecciona cantidades y crea un pedido real con la API.</p>
-          <a class="link-button secondary" href="pedidos.html">Abrir pedidos</a>
-        </article>
-        <article class="home-card">
-          <h2>Control de pagos</h2>
-          <p>Busca un pedido por ID y registra su pago con cambio automático.</p>
-          <a class="link-button primary" href="pagos.html">Abrir pagos</a>
-        </article>
-      </section>
-    </main>
+      <!-- Menú consultado desde la API -->
+      <main class="container-aurora py-4 pb-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+          <div>
+            <h2 class="section-title mb-1">Carta del restaurante</h2>
+            <p class="text-muted-aurora mb-0">El menú principal muestra los platos disponibles para vender.</p>
+          </div>
+          <div class="status-line text-muted-aurora" id="menuStatus">Esperando datos del servidor.</div>
+        </div>
+
+        <section class="dish-grid" id="menuGrid">
+          <article class="surface-card p-4">
+            <p class="mb-0">Cargando menú...</p>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+      // Referencias de UI y estado local de la página.
+      const menuGrid = document.getElementById("menuGrid");
+      const menuStatus = document.getElementById("menuStatus");
+      const dishCount = document.getElementById("dishCount");
+      let dishes = [];
+
+      // Renderiza las tarjetas del menú o un estado vacío si no hay datos.
+      function renderMenu() {
+        dishCount.textContent = dishes.length;
+
+        if (!dishes.length) {
+          menuGrid.innerHTML = `
+            <article class="empty-state">
+              <h3 class="h5 text-light mb-2">No hay platos disponibles</h3>
+              <p class="mb-0">La API no devolvió platos activos.</p>
+            </article>
+          `;
+          return;
+        }
+
+        menuGrid.innerHTML = dishes
+          .map(
+            (dish) => `
+              <article class="menu-card h-100">
+                <div class="card-body p-4 d-flex flex-column h-100">
+                  <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                    <span class="badge rounded-pill text-bg-secondary">${dish.category}</span>
+                    <span class="menu-price">${RestaurantApp.fmt(dish.price)}</span>
+                  </div>
+                  <h3 class="h5 text-light mb-2">${dish.name}</h3>
+                  <p class="text-muted-aurora flex-grow-1 mb-4">${dish.description}</p>
+                  <div class="d-flex gap-2">
+                    <a class="btn btn-aurora btn-sm flex-grow-1" href="pedidos.html">Pedir</a>
+                    <a class="btn btn-aurora-outline btn-sm flex-grow-1" href="pagos.html">Cobrar</a>
+                  </div>
+                </div>
+              </article>
+            `
+          )
+          .join("");
+      }
+
+      // Carga platos desde la API y actualiza el estado de la vista.
+      async function loadMenu() {
+        RestaurantApp.setMessage(menuStatus, "Cargando menú...");
+        try {
+          dishes = await RestaurantApp.apiGet("/dishes");
+          renderMenu();
+          RestaurantApp.setMessage(menuStatus, `Menú cargado con ${dishes.length} platos.`);
+        } catch (error) {
+          dishes = [];
+          renderMenu();
+          RestaurantApp.setMessage(menuStatus, `Error: ${error.message}`);
+        }
+      }
+
+      // Primer fetch al cargar la página.
+      loadMenu();
+    </script>
   </body>
 </html>

@@ -1,3 +1,5 @@
+"""Capa de negocio para carga de menu, ciclo de pedidos y procesamiento de pagos."""
+
 from decimal import Decimal
 
 from fastapi import HTTPException
@@ -8,10 +10,12 @@ from .schemas import OrderCreate, OrderOut, OrderItemOut, PaymentCreate
 
 
 def _to_decimal(value: float | str | Decimal) -> Decimal:
+    """Normaliza valores numericos a montos de moneda con dos decimales."""
     return Decimal(str(value)).quantize(Decimal("0.01"))
 
 
 def seed_dishes(db: Session) -> None:
+    """Carga el menu inicial una sola vez para usar la app tras el primer arranque."""
     if db.query(models.Dish).count() > 0:
         return
 
@@ -46,6 +50,7 @@ def seed_dishes(db: Session) -> None:
 
 
 def create_order(db: Session, payload: OrderCreate) -> models.Order:
+    """Persiste un pedido con sus lineas y totales calculados."""
     if not payload.items:
         raise HTTPException(status_code=400, detail="El pedido debe incluir al menos un plato")
 
@@ -81,6 +86,7 @@ def create_order(db: Session, payload: OrderCreate) -> models.Order:
 
 
 def get_order(db: Session, order_id: int) -> models.Order:
+    """Carga un pedido junto con sus lineas y platos relacionados."""
     order = (
         db.query(models.Order)
         .options(joinedload(models.Order.items).joinedload(models.OrderItem.dish))
@@ -92,7 +98,18 @@ def get_order(db: Session, order_id: int) -> models.Order:
     return order
 
 
+def list_orders(db: Session) -> list[models.Order]:
+    """Devuelve todos los pedidos ordenados del mas reciente al mas antiguo."""
+    return (
+        db.query(models.Order)
+        .options(joinedload(models.Order.items).joinedload(models.OrderItem.dish))
+        .order_by(models.Order.created_at.desc(), models.Order.id.desc())
+        .all()
+    )
+
+
 def format_order(order: models.Order) -> OrderOut:
+    """Convierte objetos ORM al esquema de respuesta consumido por el frontend."""
     items = [
         OrderItemOut(
             dish_id=item.dish_id,
@@ -115,6 +132,7 @@ def format_order(order: models.Order) -> OrderOut:
 
 
 def process_payment(db: Session, order_id: int, payload: PaymentCreate) -> models.Payment:
+    """Valida un pago, calcula el cambio y actualiza el estado del pedido."""
     order = get_order(db, order_id)
 
     if order.status == "paid":

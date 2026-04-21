@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Código & Sabor | Tablero de pedidos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/bootstrap.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Contenedor principal del tablero operativo -->
+    <div class="app-shell py-3 py-lg-4">
+      <header class="container-aurora">
+        <!-- Navegación principal -->
+        <nav class="navbar navbar-expand-lg navbar-dark aurora-navbar rounded-4 px-3 px-lg-4 py-3">
+          <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.html">
+            <span class="badge rounded-pill badge-soft">Código & Sabor</span>
+            Código & Sabor
+          </a>
+          <div class="ms-lg-auto d-flex flex-wrap gap-2">
+            <a class="btn btn-aurora-outline btn-sm" href="index.html">Menú</a>
+            <a class="btn btn-aurora-outline btn-sm" href="pedidos.html">Pedidos</a>
+            <a class="btn btn-aurora-outline btn-sm" href="pagos.html">Pagos</a>
+          </div>
+        </nav>
+
+        <!-- Hero y métricas resumidas del tablero -->
+        <section class="hero-panel mt-4">
+          <div class="row g-4 align-items-center">
+            <div class="col-lg-8">
+              <span class="badge rounded-pill badge-soft mb-3">Tablero de cocina</span>
+              <h1 class="hero-title display-5 mb-3">Pedidos en tiempo real con color por estado</h1>
+              <p class="lead text-muted-aurora mb-0">
+                Esta pantalla agrupa todas las órdenes en columnas y usa colores para distinguir si están pendientes,
+                pagadas o en otro estado.
+              </p>
+            </div>
+            <div class="col-lg-4">
+              <div class="surface-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-muted-aurora">Última actualización</span>
+                  <span class="badge rounded-pill text-bg-secondary" id="lastUpdate">--</span>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                  <div class="summary-pill flex-grow-1">
+                    <strong id="pendingCount">0</strong>
+                    <span>Pendientes</span>
+                  </div>
+                  <div class="summary-pill flex-grow-1">
+                    <strong id="paidCount">0</strong>
+                    <span>Pagados</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </header>
+
+      <!-- Columnas de estado del tablero de pedidos -->
+      <main class="container-aurora py-4 pb-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+          <div>
+            <h2 class="section-title mb-1">Pedidos del restaurante</h2>
+            <p class="text-muted-aurora mb-0">La pantalla se refresca automáticamente cada pocos segundos.</p>
+          </div>
+          <div class="status-line text-muted-aurora" id="boardStatus">Cargando pedidos...</div>
+        </div>
+
+        <section class="order-board" id="ordersBoard">
+          <div class="empty-state">Cargando tablero...</div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+      // Referencias a componentes y estado local del tablero.
+      const ordersBoard = document.getElementById("ordersBoard");
+      const boardStatus = document.getElementById("boardStatus");
+      const pendingCount = document.getElementById("pendingCount");
+      const paidCount = document.getElementById("paidCount");
+      const lastUpdate = document.getElementById("lastUpdate");
+      let orders = [];
+
+      // Agrupa pedidos por estado para renderizarlos por columna.
+      function groupOrders() {
+        return orders.reduce(
+          (accumulator, order) => {
+            if (order.status === "paid") {
+              accumulator.paid.push(order);
+            } else if (order.status === "pending") {
+              accumulator.pending.push(order);
+            } else if (order.status === "preparing") {
+              accumulator.preparing.push(order);
+            } else if (order.status === "cancelled") {
+              accumulator.cancelled.push(order);
+            } else {
+              accumulator.other.push(order);
+            }
+
+            return accumulator;
+          },
+          { pending: [], paid: [], preparing: [], cancelled: [], other: [] }
+        );
+      }
+
+      // Genera una tarjeta visual para cada pedido.
+      function renderOrderCard(order) {
+        const meta = RestaurantApp.orderStatusVariant(order.status);
+        const itemsPreview = order.items
+          .slice(0, 3)
+          .map(
+            (item) => `
+              <li>
+                <div class="d-flex justify-content-between gap-2">
+                  <span class="text-light">${item.quantity}x ${item.dish_name}</span>
+                  <span>${RestaurantApp.fmt(item.line_total)}</span>
+                </div>
+              </li>
+            `
+          )
+          .join("");
+
+        return `
+          <article class="order-card ${meta.card}">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+              <div>
+                <div class="order-id">#${order.id}</div>
+                <div class="text-muted-aurora small">${RestaurantApp.formatDate(order.created_at)}</div>
+              </div>
+              <span class="badge rounded-pill ${meta.badge}">${meta.label}</span>
+            </div>
+            <div class="order-summary mb-2">
+              <strong>${RestaurantApp.fmt(order.total)}</strong>
+              <span class="text-muted-aurora small">${order.items.length} platos</span>
+            </div>
+            <ul class="order-items">
+              ${itemsPreview}
+            </ul>
+          </article>
+        `;
+      }
+
+      // Renderiza una columna del tablero para un estado concreto.
+      function renderColumn(title, ordersList, statusKey) {
+        const meta = RestaurantApp.orderStatusVariant(statusKey);
+        const content = ordersList.length
+          ? ordersList.map(renderOrderCard).join("")
+          : `
+            <div class="empty-state">
+              <strong class="text-light d-block mb-2">Sin pedidos</strong>
+              <span>No hay órdenes en esta categoría.</span>
+            </div>
+          `;
+
+        return `
+          <section class="order-column ${meta.column}">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="h5 text-light mb-0">${title}</h3>
+              <span class="badge rounded-pill ${meta.badge}">${ordersList.length}</span>
+            </div>
+            ${content}
+          </section>
+        `;
+      }
+
+      // Pinta todo el tablero con sus contadores superiores.
+      function renderBoard() {
+        const groups = groupOrders();
+        pendingCount.textContent = groups.pending.length;
+        paidCount.textContent = groups.paid.length;
+
+        ordersBoard.innerHTML = `
+          ${renderColumn("Pendientes", groups.pending, "pending")}
+          ${renderColumn("En preparación", groups.preparing, "preparing")}
+          ${renderColumn("Pagados", groups.paid, "paid")}
+          ${renderColumn("Cancelados", groups.cancelled, "cancelled")}
+        `;
+      }
+
+      // Obtiene pedidos del backend y refresca la vista.
+      async function loadOrders() {
+        RestaurantApp.setMessage(boardStatus, "Actualizando tablero...");
+        try {
+          orders = await RestaurantApp.apiGet("/orders");
+          renderBoard();
+          lastUpdate.textContent = new Date().toLocaleTimeString("es-ES", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+          RestaurantApp.setMessage(boardStatus, `Tablero actualizado con ${orders.length} pedidos.`);
+        } catch (error) {
+          orders = [];
+          renderBoard();
+          RestaurantApp.setMessage(boardStatus, `Error: ${error.message}`);
+        }
+      }
+
+      // Carga inicial + auto refresh cada 15 segundos.
+      loadOrders();
+      setInterval(loadOrders, 15000);
+    </script>
+  </body>
+</html>

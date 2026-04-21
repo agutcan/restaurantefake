@@ -1,3 +1,5 @@
+"""Modelos ORM de SQLAlchemy para menu, pedidos y pagos."""
+
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, Numeric, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -5,6 +7,7 @@ from .database import Base
 
 
 class Dish(Base):
+    """Plato del menu disponible para incluirse en un pedido."""
     __tablename__ = "dishes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -16,6 +19,7 @@ class Dish(Base):
 
 
 class Order(Base):
+    """Pedido del cliente con estado y totales agregados."""
     __tablename__ = "orders"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -30,6 +34,7 @@ class Order(Base):
 
 
 class OrderItem(Base):
+    """Linea que vincula un plato con un pedido, incluyendo cantidad y precio."""
     __tablename__ = "order_items"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -44,6 +49,7 @@ class OrderItem(Base):
 
 
 class Payment(Base):
+    """Registro de pago asociado a un pedido."""
     __tablename__ = "payments"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

@@ -3,66 +3,106 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Automatización de pedidos</title>
+    <title>Código & Sabor | Crear pedidos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="assets/bootstrap.min.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="container">
-      <header class="hero">
-        <h1>Automatización de pedidos</h1>
-        <p>Selecciona platos, crea el pedido real y revisa el detalle generado por el backend.</p>
-        <nav class="nav">
-          <a class="secondary" href="index.html">Inicio</a>
-          <a class="secondary" href="menu.html">Menú</a>
-          <a class="primary" href="pagos.html">Ir a pagos</a>
+    <!-- Contenedor principal de la pantalla de pedidos -->
+    <div class="app-shell py-3 py-lg-4">
+      <header class="container-aurora">
+        <!-- Navegación principal -->
+        <nav class="navbar navbar-expand-lg navbar-dark aurora-navbar rounded-4 px-3 px-lg-4 py-3">
+          <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.html">
+            <span class="badge rounded-pill badge-soft">Código & Sabor</span>
+            Restaurante
+          </a>
+          <div class="ms-lg-auto d-flex flex-wrap gap-2">
+            <a class="btn btn-aurora-outline btn-sm" href="index.html">Menú</a>
+            <a class="btn btn-aurora-outline btn-sm" href="pagos.html">Control de pagos</a>
+            <a class="btn btn-aurora btn-sm" href="pedidos-estado.html">Tablero de pedidos</a>
+          </div>
         </nav>
+
+        <!-- Resumen de estado del pedido actual -->
+        <section class="hero-panel mt-4">
+          <div class="row g-4 align-items-center">
+            <div class="col-lg-8">
+              <span class="badge rounded-pill badge-soft mb-3">Creación de pedidos</span>
+              <h1 class="hero-title display-5 mb-3">Selecciona platos, define cantidades y genera el pedido</h1>
+              <p class="lead text-muted-aurora mb-0">
+                Esta pantalla toma el menú real, crea una orden en la API y deja el pedido listo para cobrar.
+              </p>
+            </div>
+            <div class="col-lg-4">
+              <div class="surface-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="text-muted-aurora">Pedido actual</span>
+                  <span class="badge rounded-pill text-bg-secondary" id="orderStatusValue">Pendiente</span>
+                </div>
+                <div class="order-id mb-2" id="orderIdValue">Sin pedido</div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted-aurora">Subtotal</span>
+                  <strong id="subtotalValue">0,00 €</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </header>
 
-      <section class="layout">
-        <article class="card">
-          <h2>Selección de platos</h2>
-          <div class="grid-dishes" id="dishesGrid">
-            <div class="dish">Cargando platos...</div>
-          </div>
-          <div class="actions">
-            <button class="primary" id="createOrderBtn">Crear pedido</button>
-            <button id="reloadBtn">Recargar menú</button>
-          </div>
-          <div class="msg" id="statusMsg">Selecciona cantidades y crea un pedido.</div>
-        </article>
-
-        <aside class="side-col">
-          <article class="card">
-            <h2>Pedido creado</h2>
-            <div class="pay-box">
-              <div class="pay-item"><b>Pedido</b><span id="orderIdValue">Sin pedido</span></div>
-              <div class="pay-item"><b>Subtotal</b><span id="subtotalValue">0.00 €</span></div>
-              <div class="pay-item"><b>Estado</b><span id="orderStatusValue">Pendiente</span></div>
+      <!-- Zona de selección de platos y acciones -->
+      <main class="container-aurora py-4 pb-5">
+        <div class="row g-4">
+          <div class="col-xl-8">
+            <div class="surface-card p-4 h-100">
+              <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+                <div>
+                  <h2 class="section-title mb-1">Selecciona los platos</h2>
+                  <p class="text-muted-aurora mb-0">Elige cantidades y luego pulsa crear pedido.</p>
+                </div>
+                <div class="status-line text-muted-aurora" id="statusMsg">Selecciona cantidades y crea un pedido.</div>
+              </div>
+              <div class="dish-grid" id="dishesGrid">
+                <article class="mini-card p-4">Cargando platos...</article>
+              </div>
             </div>
-            <p class="mini">El pedido se guarda en PostgreSQL y se puede pagar desde la otra pantalla.</p>
-          </article>
+          </div>
 
-          <article class="card">
-            <h2>Flujo de automatización</h2>
-            <ul class="list">
-              <li><span class="chip">1</span> Se lee el menú desde la API.</li>
-              <li><span class="chip">2</span> El usuario elige cantidades.</li>
-              <li><span class="chip ok">3</span> La API calcula el subtotal y genera el pedido.</li>
-              <li><span class="chip">4</span> El pedido queda listo para cobro.</li>
-            </ul>
-          </article>
-        </aside>
-      </section>
-    </main>
+          <div class="col-xl-4">
+            <div class="sticky-top-soft d-grid gap-4">
+              <div class="surface-card p-4">
+                <h2 class="section-title h4 mb-3">Acciones</h2>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-aurora" id="createOrderBtn">Crear pedido</button>
+                  <button class="btn btn-aurora-outline" id="reloadBtn">Recargar menú</button>
+                </div>
+                <hr class="section-divider my-4" />
+                <p class="text-muted-aurora mb-0">
+                  El sistema calcula el subtotal automáticamente y guarda el pedido en PostgreSQL.
+                </p>
+              </div>
+
+              <div class="surface-card p-4">
+                <h2 class="section-title h4 mb-3">Detalle del pedido</h2>
+                <div id="orderDetailEmpty" class="empty-state">Aún no se ha creado ningún pedido.</div>
+                <div id="orderDetailList" class="d-grid gap-2 d-none"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
 
     <script src="app.js"></script>
     <script>
+      // Referencias de controles y estado en memoria del menú.
       const dishesGrid = document.getElementById("dishesGrid");
       const createOrderBtn = document.getElementById("createOrderBtn");
       const reloadBtn = document.getElementById("reloadBtn");
@@ -70,25 +110,31 @@
       const subtotalValue = document.getElementById("subtotalValue");
       const orderIdValue = document.getElementById("orderIdValue");
       const orderStatusValue = document.getElementById("orderStatusValue");
+      const orderDetailEmpty = document.getElementById("orderDetailEmpty");
+      const orderDetailList = document.getElementById("orderDetailList");
       let dishes = [];
 
-      function renderDishes() {
-        if (!dishes.length) {
-          dishesGrid.innerHTML = '<div class="dish">No hay platos disponibles.</div>';
+      // Muestra el detalle del pedido generado.
+      function renderOrderDetail(order) {
+        if (!order) {
+          orderDetailEmpty.classList.remove("d-none");
+          orderDetailList.classList.add("d-none");
+          orderDetailList.innerHTML = "";
           return;
         }
 
-        dishesGrid.innerHTML = dishes
+        orderDetailEmpty.classList.add("d-none");
+        orderDetailList.classList.remove("d-none");
+        orderDetailList.innerHTML = order.items
           .map(
-            (dish) => `
-              <div class="dish">
-                <strong>${dish.name}</strong>
-                <small>${dish.description}</small>
-                <small>Categoría: ${dish.category}</small>
-                <span class="price">${RestaurantApp.fmt(dish.price)}</span>
-                <div class="dish-control">
-                  <label for="qty-${dish.id}">Cantidad</label>
-                  <input id="qty-${dish.id}" type="number" min="0" step="1" value="0" />
+            (item) => `
+              <div class="mini-card p-3">
+                <div class="d-flex justify-content-between gap-2">
+                  <div>
+                    <strong class="text-light d-block">${item.dish_name}</strong>
+                    <span class="text-muted-aurora">Cantidad: ${item.quantity}</span>
+                  </div>
+                  <strong>${RestaurantApp.fmt(item.line_total)}</strong>
                 </div>
               </div>
             `
@@ -96,12 +142,43 @@
           .join("");
       }
 
+      // Dibuja la lista de platos con input de cantidad.
+      function renderDishes() {
+        if (!dishes.length) {
+          dishesGrid.innerHTML = `
+            <article class="empty-state">
+              <h3 class="h5 text-light mb-2">No hay platos disponibles</h3>
+              <p class="mb-0">No se pudo cargar el menú desde la API.</p>
+            </article>
+          `;
+          return;
+        }
+
+        dishesGrid.innerHTML = dishes
+          .map(
+            (dish) => `
+              <article class="mini-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                  <span class="badge rounded-pill text-bg-secondary">${dish.category}</span>
+                  <span class="menu-price">${RestaurantApp.fmt(dish.price)}</span>
+                </div>
+                <h3 class="h5 text-light mb-2">${dish.name}</h3>
+                <p class="text-muted-aurora mb-3">${dish.description}</p>
+                <label class="form-label" for="qty-${dish.id}">Cantidad</label>
+                <input class="form-control dish-quantity" id="qty-${dish.id}" type="number" min="0" step="1" value="0" />
+              </article>
+            `
+          )
+          .join("");
+      }
+
+      // Obtiene platos activos desde la API.
       async function loadDishes() {
         RestaurantApp.setMessage(statusMsg, "Cargando menú...");
         try {
           dishes = await RestaurantApp.apiGet("/dishes");
           renderDishes();
-          RestaurantApp.setMessage(statusMsg, "Menú listo. Crea un pedido real con la cantidad que quieras.");
+          RestaurantApp.setMessage(statusMsg, `Menú listo con ${dishes.length} platos.`);
         } catch (error) {
           dishes = [];
           renderDishes();
@@ -109,6 +186,7 @@
         }
       }
 
+      // Crea una orden con los items seleccionados.
       async function createOrder() {
         const items = RestaurantApp.getSelectedItems(dishes);
         if (!items.length) {
@@ -122,6 +200,9 @@
           subtotalValue.textContent = RestaurantApp.fmt(order.subtotal);
           orderIdValue.textContent = `#${order.id}`;
           orderStatusValue.textContent = RestaurantApp.orderStatusLabel(order.status);
+          orderStatusValue.className = "badge rounded-pill text-bg-warning";
+          renderOrderDetail(order);
+          RestaurantApp.resetQuantityInputs(dishes);
           RestaurantApp.setMessage(statusMsg, `Pedido #${order.id} creado correctamente.`);
         } catch (error) {
           RestaurantApp.setMessage(statusMsg, `Error: ${error.message}`);
@@ -132,6 +213,7 @@
 
       reloadBtn.addEventListener("click", loadDishes);
       createOrderBtn.addEventListener("click", createOrder);
+      // Carga inicial de menú al entrar a la vista.
       loadDishes();
     </script>
   </body>

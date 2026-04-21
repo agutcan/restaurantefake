@@ -3,71 +3,139 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Control de pagos</title>
+    <title>Código & Sabor | Control de pagos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="assets/bootstrap.min.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="container">
-      <header class="hero">
-        <h1>Control de pagos</h1>
-        <p>Introduce el pedido, el método de pago y el importe para registrar el cobro real.</p>
-        <nav class="nav">
-          <a class="secondary" href="index.html">Inicio</a>
-          <a class="secondary" href="menu.html">Menú</a>
-          <a class="secondary" href="pedidos.html">Pedidos</a>
+    <!-- Contenedor principal de la pantalla de pagos -->
+    <div class="app-shell py-3 py-lg-4">
+      <header class="container-aurora">
+        <!-- Navegación principal -->
+        <nav class="navbar navbar-expand-lg navbar-dark aurora-navbar rounded-4 px-3 px-lg-4 py-3">
+          <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.html">
+            <span class="badge rounded-pill badge-soft">Código & Sabor</span>
+            Restaurante
+          </a>
+          <div class="ms-lg-auto d-flex flex-wrap gap-2">
+            <a class="btn btn-aurora-outline btn-sm" href="index.html">Menú</a>
+            <a class="btn btn-aurora-outline btn-sm" href="pedidos.html">Pedidos</a>
+            <a class="btn btn-aurora btn-sm" href="pedidos-estado.html">Tablero de pedidos</a>
+          </div>
         </nav>
+
+        <!-- Hero y resumen del pedido cargado -->
+        <section class="hero-panel mt-4">
+          <div class="row g-4 align-items-center">
+            <div class="col-lg-8">
+              <span class="badge rounded-pill badge-soft mb-3">Control de pagos</span>
+              <h1 class="hero-title display-5 mb-3">Busca un pedido y registra su cobro sin salir del sistema</h1>
+              <p class="lead text-muted-aurora mb-0">
+                La pantalla carga el pedido por ID, comprueba el total y permite pagar en efectivo o tarjeta.
+              </p>
+            </div>
+            <div class="col-lg-4">
+              <div class="surface-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="text-muted-aurora">Estado</span>
+                  <span class="badge rounded-pill text-bg-secondary" id="paymentStatus">Pendiente</span>
+                </div>
+                <div class="order-id mb-2" id="orderInfo">Sin pedido</div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted-aurora">Total</span>
+                  <strong id="totalInfo">0,00 €</strong>
+                </div>
+                <div class="d-flex justify-content-between mt-2">
+                  <span class="text-muted-aurora">Cambio</span>
+                  <strong id="changeInfo">0,00 €</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </header>
 
-      <section class="layout">
-        <article class="card">
-          <h2>Pago del pedido</h2>
-          <div class="pay-form">
-            <input id="orderIdInput" type="number" min="1" step="1" placeholder="ID del pedido" />
-            <select id="paymentMethod">
-              <option value="cash">Efectivo</option>
-              <option value="card">Tarjeta</option>
-            </select>
-            <input id="amountInput" type="number" min="0" step="0.01" placeholder="Importe pagado" />
-          </div>
-          <div class="actions">
-            <button class="primary" id="loadOrderBtn">Cargar pedido</button>
-            <button class="primary" id="payBtn">Pagar pedido</button>
-          </div>
-          <div class="msg" id="statusMsg">Escribe un ID de pedido para ver el total y pagarlo.</div>
-        </article>
+      <!-- Formulario de cobro y detalle de líneas -->
+      <main class="container-aurora py-4 pb-5">
+        <div class="row g-4">
+          <div class="col-xl-5">
+            <div class="surface-card p-4 h-100">
+              <h2 class="section-title h4 mb-3">Buscar y pagar</h2>
+              <div class="d-grid gap-3">
+                <div>
+                  <label class="form-label" for="orderIdInput">ID del pedido</label>
+                  <input class="form-control" id="orderIdInput" type="number" min="1" step="1" placeholder="Ejemplo: 1" />
+                </div>
+                <div>
+                  <label class="form-label" for="paymentMethod">Método de pago</label>
+                  <select class="form-select payment-method-select" id="paymentMethod">
+                    <option value="cash">Efectivo</option>
+                    <option value="card">Tarjeta</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label" for="amountInput">Importe pagado</label>
+                  <input class="form-control" id="amountInput" type="number" min="0" step="0.01" placeholder="0,00" />
+                </div>
+              </div>
 
-        <aside class="side-col">
-          <article class="card">
-            <h2>Resumen del pedido</h2>
-            <div class="pay-box">
-              <div class="pay-item"><b>Pedido</b><span id="orderInfo">Sin pedido</span></div>
-              <div class="pay-item"><b>Total</b><span id="totalInfo">0.00 €</span></div>
-              <div class="pay-item"><b>Estado</b><span id="paymentStatus">Pendiente</span></div>
+              <div class="d-grid gap-2 mt-4">
+                <button class="btn btn-aurora" id="loadOrderBtn">Cargar pedido</button>
+                <button class="btn btn-aurora-outline" id="payBtn">Pagar pedido</button>
+              </div>
+
+              <hr class="section-divider my-4" />
+              <div class="status-line text-muted-aurora" id="statusMsg">Escribe un ID de pedido para ver el total y pagarlo.</div>
             </div>
-            <p class="mini">Si pagas en efectivo y te sobra dinero, la API devuelve el cambio.</p>
-          </article>
+          </div>
 
-          <article class="card">
-            <h2>Control real</h2>
-            <ul class="list">
-              <li><span class="chip">1</span> Se consulta el pedido por ID.</li>
-              <li><span class="chip">2</span> El sistema comprueba el importe.</li>
-              <li><span class="chip ok">3</span> Se registra el pago en PostgreSQL.</li>
-              <li><span class="chip">4</span> El pedido queda marcado como pagado.</li>
-            </ul>
-          </article>
-        </aside>
-      </section>
-    </main>
+          <div class="col-xl-7">
+            <div class="surface-card p-4 h-100">
+              <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+                <div>
+                  <h2 class="section-title mb-1">Resumen del pedido</h2>
+                  <p class="text-muted-aurora mb-0">Consulta la información antes de confirmar el cobro.</p>
+                </div>
+                <span class="badge rounded-pill text-bg-info" id="paymentMethodValue">Efectivo</span>
+              </div>
+              <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                  <div class="mini-card p-3 h-100">
+                    <span class="text-muted-aurora d-block mb-1">Pedido</span>
+                    <strong id="orderSummaryValue" class="text-light">Sin pedido</strong>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mini-card p-3 h-100">
+                    <span class="text-muted-aurora d-block mb-1">Total</span>
+                    <strong id="summaryTotalValue" class="text-light">0,00 €</strong>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mini-card p-3 h-100">
+                    <span class="text-muted-aurora d-block mb-1">Estado</span>
+                    <strong id="summaryStatusValue" class="text-light">Pendiente</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div id="paymentDetailEmpty" class="empty-state">Todavía no hay un pedido cargado.</div>
+              <div id="paymentDetailList" class="d-none d-grid gap-2"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
 
     <script src="app.js"></script>
     <script>
+      // Referencias a elementos de UI y estado de pedido actual.
       const orderIdInput = document.getElementById("orderIdInput");
       const paymentMethod = document.getElementById("paymentMethod");
       const amountInput = document.getElementById("amountInput");
@@ -76,32 +144,88 @@
       const statusMsg = document.getElementById("statusMsg");
       const orderInfo = document.getElementById("orderInfo");
       const totalInfo = document.getElementById("totalInfo");
+      const changeInfo = document.getElementById("changeInfo");
       const paymentStatus = document.getElementById("paymentStatus");
+      const paymentMethodValue = document.getElementById("paymentMethodValue");
+      const orderSummaryValue = document.getElementById("orderSummaryValue");
+      const summaryTotalValue = document.getElementById("summaryTotalValue");
+      const summaryStatusValue = document.getElementById("summaryStatusValue");
+      const paymentDetailEmpty = document.getElementById("paymentDetailEmpty");
+      const paymentDetailList = document.getElementById("paymentDetailList");
       let currentOrder = null;
 
+      // Renderiza líneas del pedido seleccionado para validar cobro.
+      function renderPaymentDetail(order) {
+        if (!order) {
+          paymentDetailEmpty.classList.remove("d-none");
+          paymentDetailList.classList.add("d-none");
+          paymentDetailList.innerHTML = "";
+          return;
+        }
+
+        paymentDetailEmpty.classList.add("d-none");
+        paymentDetailList.classList.remove("d-none");
+        paymentDetailList.innerHTML = order.items
+          .map(
+            (item) => `
+              <div class="mini-card p-3">
+                <div class="d-flex justify-content-between gap-2">
+                  <div>
+                    <strong class="text-light d-block">${item.dish_name}</strong>
+                    <span class="text-muted-aurora">Cantidad: ${item.quantity} · ${RestaurantApp.fmt(item.unit_price)} unidad</span>
+                  </div>
+                  <strong>${RestaurantApp.fmt(item.line_total)}</strong>
+                </div>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      // Sincroniza todos los widgets con el pedido actualmente cargado.
+      function applyOrderToView(order) {
+        currentOrder = order;
+        orderInfo.textContent = `#${order.id}`;
+        totalInfo.textContent = RestaurantApp.fmt(order.total);
+        changeInfo.textContent = RestaurantApp.fmt(0);
+        paymentStatus.textContent = RestaurantApp.orderStatusLabel(order.status);
+        paymentStatus.className = order.status === "paid" ? "badge rounded-pill text-bg-success" : "badge rounded-pill text-bg-warning";
+        paymentMethodValue.textContent = RestaurantApp.paymentMethodLabel(paymentMethod.value);
+        orderSummaryValue.textContent = `#${order.id}`;
+        summaryTotalValue.textContent = RestaurantApp.fmt(order.total);
+        summaryStatusValue.textContent = RestaurantApp.orderStatusLabel(order.status);
+        amountInput.value = Number(order.total).toFixed(2);
+        renderPaymentDetail(order);
+      }
+
+      // Busca un pedido por ID y lo muestra en pantalla.
       async function loadOrder() {
         const orderId = Number.parseInt(orderIdInput.value, 10);
         if (!Number.isFinite(orderId) || orderId <= 0) {
-            RestaurantApp.setMessage(statusMsg, "Introduce un ID de pedido válido.");
+          RestaurantApp.setMessage(statusMsg, "Introduce un ID de pedido válido.");
           return;
         }
 
         try {
           currentOrder = await RestaurantApp.apiGet(`/orders/${orderId}`);
-          orderInfo.textContent = `#${currentOrder.id}`;
-          totalInfo.textContent = RestaurantApp.fmt(currentOrder.total);
-          paymentStatus.textContent = RestaurantApp.orderStatusLabel(currentOrder.status);
-          amountInput.value = Number(currentOrder.total).toFixed(2);
+          applyOrderToView(currentOrder);
           RestaurantApp.setMessage(statusMsg, `Pedido #${currentOrder.id} cargado.`);
         } catch (error) {
           currentOrder = null;
           orderInfo.textContent = "Sin pedido";
-          totalInfo.textContent = "0.00 €";
+          totalInfo.textContent = "0,00 €";
+          changeInfo.textContent = "0,00 €";
           paymentStatus.textContent = "Pendiente";
+          paymentStatus.className = "badge rounded-pill text-bg-secondary";
+          orderSummaryValue.textContent = "Sin pedido";
+          summaryTotalValue.textContent = "0,00 €";
+          summaryStatusValue.textContent = "Pendiente";
+          renderPaymentDetail(null);
           RestaurantApp.setMessage(statusMsg, `Error: ${error.message}`);
         }
       }
 
+      // Procesa el pago del pedido actual con el método seleccionado.
       async function payOrder() {
         if (!currentOrder) {
           RestaurantApp.setMessage(statusMsg, "Primero carga un pedido.");
@@ -120,11 +244,17 @@
             method: paymentMethod.value,
             amount_paid: amountPaid,
           });
+
+          changeInfo.textContent = RestaurantApp.fmt(payment.change_amount);
           paymentStatus.textContent = RestaurantApp.paymentStatusLabel(payment.status);
+          paymentStatus.className = "badge rounded-pill text-bg-success";
+          paymentMethodValue.textContent = RestaurantApp.paymentMethodLabel(payment.method);
           RestaurantApp.setMessage(
             statusMsg,
             `Pago ${RestaurantApp.paymentStatusLabel(payment.status).toLowerCase()}. Método: ${RestaurantApp.paymentMethodLabel(payment.method)}. Cambio: ${RestaurantApp.fmt(payment.change_amount)}.`
           );
+          currentOrder = await RestaurantApp.apiGet(`/orders/${currentOrder.id}`);
+          applyOrderToView(currentOrder);
         } catch (error) {
           RestaurantApp.setMessage(statusMsg, `Error: ${error.message}`);
         } finally {
@@ -134,6 +264,10 @@
 
       loadOrderBtn.addEventListener("click", loadOrder);
       payBtn.addEventListener("click", payOrder);
+      // Mantiene la etiqueta de método en sincronía con el select.
+      paymentMethod.addEventListener("change", () => {
+        paymentMethodValue.textContent = RestaurantApp.paymentMethodLabel(paymentMethod.value);
+      });
     </script>
   </body>
 </html>

@@ -1,3 +1,5 @@
+"""Configuracion de base de datos y helpers de ciclo de vida de sesiones SQLAlchemy."""
+
 import os
 
 from sqlalchemy import create_engine
@@ -14,6 +16,7 @@ Base = declarative_base()
 
 
 def get_db():
+    """Entrega una sesion de BD por solicitud y garantiza su cierre."""
     db = SessionLocal()
     try:
         yield db

@@ -1,334 +1,470 @@
+/*
+  Hoja de estilos global de Código & Sabor.
+  Organiza tema, componentes reutilizables y layout responsivo.
+  Tema: Dark mode con gradientes púrpura/cyan, efectos glassmorphism.
+*/
+
+/* Variables CSS: Paleta de colores, espaciado y efectos de sombra. */
 :root {
-  --bg: #f3efe8;
-  --bg-2: #e7dccb;
-  --text: #1a1917;
-  --surface: #fffdf8;
-  --line: #221f1a;
-  --primary: #d94f04;
-  --mint: #2b9f8a;
-  --blue: #265d97;
+  --bg: #090816;
+  --bg-2: #120f25;
+  --surface: rgba(18, 16, 33, 0.92);
+  --surface-2: rgba(28, 23, 53, 0.92);
+  --line: rgba(226, 214, 255, 0.12);
+  --line-strong: rgba(226, 214, 255, 0.22);
+  --text: #f4f1ff;
+  --muted: #b9b0d6;
+  --primary: #a677ff;
+  --primary-2: #7d55ff;
+  --cyan: #7fe7ff;
+  --success: #36d48b;
+  --warning: #ffbf5f;
+  --danger: #ff748f;
+  --shadow: 0 30px 90px rgba(0, 0, 0, 0.42);
 }
 
+/* Reseteo global: border-box para cálculos predecibles de ancho/alto. */
 * {
   box-sizing: border-box;
 }
 
+/* Comportamiento de scroll suave en toda la página. */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Body: Fondo Aurora con múltiples gradientes radiales superpuestos.
+   Crea efecto de luces difusas (púrpura arriba-izq, cyan arriba-der, verde abajo-der). */
 body {
   margin: 0;
-  font-family: "Space Grotesk", "Segoe UI", sans-serif;
   color: var(--text);
-  background: radial-gradient(circle at 85% 8%, #ffe2c4 0%, transparent 24%),
-    radial-gradient(circle at 10% 96%, #ccebe5 0%, transparent 22%),
-    linear-gradient(125deg, var(--bg), var(--bg-2));
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(166, 119, 255, 0.22), transparent 28%),
+    radial-gradient(circle at 82% 10%, rgba(127, 231, 255, 0.18), transparent 24%),
+    radial-gradient(circle at 80% 86%, rgba(54, 212, 139, 0.14), transparent 24%),
+    linear-gradient(160deg, var(--bg), var(--bg-2));
   min-height: 100vh;
 }
 
-.container {
-  max-width: 1120px;
+/* Grid pattern overlay: Líneas sutiles en 72px x 72px que crean textura. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.16), transparent 65%);
+}
+
+/* Enlaces heredan color del texto para coherencia visual. */
+a {
+  color: inherit;
+}
+
+/* Contenedor raíz de la app con z-index para superponer el grid. */
+.app-shell {
+  position: relative;
+  z-index: 1;
+}
+
+/* Contenedor fluido máximo 1200px con márgenes automáticos (centrado). */
+.container-aurora {
+  width: min(1200px, calc(100% - 1.5rem));
   margin: 0 auto;
-  padding: 1.2rem 1rem 2.4rem;
 }
 
-.hero {
-  border: 3px solid var(--line);
-  border-radius: 24px;
-  background: linear-gradient(150deg, #fffaf2, #fff3df);
-  padding: 1.2rem;
-  box-shadow: 8px 8px 0 var(--line);
+/* Navbar con efecto glassmorphism: fondo semi-transparente + blur trasero. */
+.aurora-navbar {
+  border: 1px solid var(--line);
+  background: rgba(13, 11, 25, 0.84);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
 }
 
-.hero h1 {
-  margin: 0;
+/* Superficies de UI con efecto cristal y borde suave. */
+.hero-panel,
+.surface-card,
+.mini-card,
+.menu-card,
+.order-card,
+.order-column,
+.empty-state,
+.summary-pill {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(26, 21, 47, 0.95), rgba(15, 13, 27, 0.96));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.hero-panel {
+  border-radius: 28px;
+  padding: clamp(1.25rem, 2vw, 2rem);
+}
+
+/* Títulos con font bold y condensada para impacto visual. */
+.hero-title,
+.section-title,
+.card-title-aurora {
   font-family: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
-  font-size: clamp(1.5rem, 4vw, 2.6rem);
+  letter-spacing: -0.02em;
+}
+
+.hero-title {
   font-weight: 800;
+  line-height: 0.95;
 }
 
-.hero p {
-  margin: 0.45rem 0 0;
-  max-width: 62ch;
+.text-muted-aurora,
+.card-subtitle-aurora {
+  color: var(--muted) !important;
 }
 
-.nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 1rem;
-}
-
-.nav a,
-.nav button,
-button,
-.link-button {
-  border: 2px solid var(--line);
-  border-radius: 12px;
-  background: #fff;
-  color: var(--text);
-  padding: 0.55rem 0.9rem;
-  font: inherit;
+/* Botones redondeados (999px = totalmente circular en los bordes).
+   Transiciones suaves en transform, border, background y shadow. */
+.btn-aurora,
+.btn-aurora-outline {
+  border-radius: 999px;
   font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
+  border: 1px solid transparent;
+  padding: 0.8rem 1.1rem;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+/* Botón primario: Gradiente púrpura con sombra glow. */
+.btn-aurora {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 14px 35px rgba(125, 85, 255, 0.35);
+}
+
+.btn-aurora:hover,
+.btn-aurora-outline:hover {
+  transform: translateY(-1px);
+}
+
+/* Botón outline: Borde sutil, fondo transparente, se llena con hover. */
+.btn-aurora-outline {
+  color: var(--text);
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.btn-aurora-outline:hover {
+  border-color: rgba(166, 119, 255, 0.7);
+  background: rgba(166, 119, 255, 0.12);
+  color: #fff;
+}
+
+/* Tarjetas base usadas en menú, pedidos y tablero. */
+.surface-card,
+.mini-card,
+.menu-card,
+.order-card,
+.order-column,
+.empty-state {
+  border-radius: 24px;
+}
+
+/* Transiciones suaves en tarjetas: eleva y cambia borde al hover. */
+.menu-card,
+.order-card,
+.mini-card {
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.menu-card:hover,
+.order-card:hover,
+.mini-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(166, 119, 255, 0.42);
+}
+
+/* Chips: Píldoras redondeadas con iconos de estado (puntos circulares). */
+.menu-price,
+.status-chip {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 0.35rem;
-}
-
-button.primary,
-.nav a.primary,
-.link-button.primary {
-  background: var(--primary);
-  color: #fff;
-}
-
-button.secondary,
-.nav a.secondary,
-.link-button.secondary {
-  background: var(--blue);
-  color: #fff;
-}
-
-.layout {
-  margin-top: 1rem;
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 1rem;
-}
-
-.card {
-  border: 3px solid var(--line);
-  border-radius: 20px;
-  background: var(--surface);
-  box-shadow: 7px 7px 0 var(--line);
-  padding: 1rem;
-}
-
-.card h2 {
-  margin: 0 0 0.8rem;
-  font-family: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
-  font-size: 1.25rem;
-}
-
-.grid-dishes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.7rem;
-}
-
-.dish {
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  padding: 0.75rem;
-  background: #fff;
-  display: grid;
-  gap: 0.4rem;
-}
-
-.dish strong {
-  display: block;
-  font-size: 1rem;
-}
-
-.dish small {
-  display: block;
-  opacity: 0.8;
-}
-
-.price {
-  display: inline-block;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.dish-control {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-}
-
-.dish-control input,
-.pay-form select,
-.pay-form input,
-.order-search input {
-  width: 100%;
-  border: 2px solid var(--line);
-  border-radius: 10px;
-  padding: 0.45rem;
-  font: inherit;
-  background: #fff;
-}
-
-.dish-control input {
-  width: 78px;
-}
-
-.side-col {
-  display: grid;
-  gap: 1rem;
-}
-
-.list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.list li {
-  border: 2px dashed var(--line);
-  border-radius: 12px;
-  padding: 0.55rem 0.65rem;
-  margin-bottom: 0.55rem;
-  background: #fffefb;
-}
-
-.chip {
-  display: inline-block;
   border-radius: 999px;
-  padding: 0.2rem 0.55rem;
-  font-size: 0.8rem;
+  padding: 0.35rem 0.75rem;
   font-weight: 700;
+}
+
+/* Precio en menú: Gradiente púrpura-cyan para destacar visualmente. */
+.menu-price {
   color: #fff;
-  background: var(--primary);
-  margin-right: 0.3rem;
+  background: linear-gradient(135deg, rgba(166, 119, 255, 0.88), rgba(127, 231, 255, 0.52));
 }
 
-.chip.ok {
-  background: var(--mint);
-}
-
-.panel {
-  margin-top: 1rem;
-}
-
-.actions {
-  margin-top: 1rem;
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.pay-box {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
-  gap: 0.6rem;
-}
-
-.pay-item {
-  border: 2px solid var(--line);
-  border-radius: 12px;
-  padding: 0.65rem;
-  background: #fff;
-}
-
-.pay-item b {
-  display: block;
+/* Chip de estado con punto de color antes del texto. */
+.status-chip {
   font-size: 0.9rem;
 }
 
-.pay-form {
-  margin-top: 0.8rem;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(100px, 1fr));
-  gap: 0.6rem;
+/* Punto circular que indica color del estado (pending/paid/preparing/etc). */
+.status-chip::before {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: currentColor;
 }
 
-.pay-form .span-2 {
-  grid-column: span 2;
+.section-title {
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
+  margin: 0;
 }
 
-.msg {
-  margin-top: 0.8rem;
-  border: 2px dashed var(--line);
-  border-radius: 12px;
-  padding: 0.65rem;
-  background: #fffefb;
-  min-height: 46px;
+.summary-pill {
+  min-width: 150px;
+  border-radius: 18px;
+  padding: 0.85rem 1rem;
 }
 
-.mini {
-  opacity: 0.8;
-  font-size: 0.85rem;
+.summary-pill strong {
+  display: block;
+  font-family: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  font-size: 1.7rem;
+  line-height: 1;
 }
 
-.order-list {
-  display: grid;
-  gap: 0.75rem;
+.summary-pill span {
+  color: var(--muted);
+  font-size: 0.92rem;
 }
 
-.order-item {
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  background: #fff;
-  padding: 0.8rem;
-}
-
-.order-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.order-lines {
-  margin: 0.7rem 0 0;
+.list-aurora {
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.order-lines li {
-  padding: 0.35rem 0;
-  border-bottom: 1px solid rgba(34, 31, 26, 0.12);
+.list-aurora li {
+  padding: 0.7rem 0.85rem;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.status-ok {
-  color: var(--mint);
-  font-weight: 700;
+.badge-soft {
+  color: #fff;
+  background: rgba(166, 119, 255, 0.18);
+  border: 1px solid rgba(166, 119, 255, 0.3);
 }
 
-.status-pending {
-  color: var(--primary);
-  font-weight: 700;
+/* Inputs y selects: Fondo oscuro semi-transparente para legibilidad en dark mode. */
+.form-control,
+.form-select {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
 }
 
-.home-grid {
-  margin-top: 1rem;
+/* Select de método de pago: Fondo muy oscuro para máximo contraste. */
+.payment-method-select {
+  background-color: rgba(18, 16, 33, 0.98);
+  color: var(--text);
+  border-color: rgba(166, 119, 255, 0.34);
+}
+
+/* Opciones del select: Fondo oscuro para visibilidad en todos los estados. */
+.payment-method-select option {
+  background-color: #120f25;
+  color: var(--text);
+}
+
+.payment-method-select option:checked,
+.payment-method-select option:hover {
+  background-color: rgba(166, 119, 255, 0.28);
+  color: #fff;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  border-color: rgba(166, 119, 255, 0.75);
+  box-shadow: 0 0 0 0.2rem rgba(166, 119, 255, 0.16);
+}
+
+/* Placeholder con opacidad para diferenciarse del texto real. */
+.form-control::placeholder {
+  color: rgba(244, 241, 255, 0.5);
+}
+
+/* Texto secundario en formularios: Color apagado (muted). */
+.form-label,
+.form-text,
+.small,
+.card-text,
+.card-body p,
+.card-body li {
+  color: var(--muted);
+}
+
+.dish-quantity {
+  width: 88px;
+}
+
+/* Grillas responsivas con auto-fit y minmax para flujo automático. */
+.dish-grid,
+.order-board {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
 }
 
-.home-card {
-  border: 3px solid var(--line);
-  border-radius: 20px;
-  background: var(--surface);
-  box-shadow: 7px 7px 0 var(--line);
+/* Menú: Columnas de 220px mín, se adaptan al ancho disponible. */
+.dish-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* Tablero de pedidos: Columnas por estado (pending/paid/preparing), 290px mín. */
+.order-board {
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+}
+
+.order-column {
   padding: 1rem;
 }
 
-.home-card h2 {
-  margin-top: 0;
+/* Variantes cromáticas de columnas por estado de pedido. */
+.order-column-pending {
+  border-color: rgba(255, 191, 95, 0.34);
+  background: linear-gradient(180deg, rgba(58, 44, 16, 0.58), rgba(15, 13, 27, 0.94));
 }
 
-@media (max-width: 920px) {
-  .layout {
-    grid-template-columns: 1fr;
+.order-column-paid {
+  border-color: rgba(54, 212, 139, 0.34);
+  background: linear-gradient(180deg, rgba(12, 53, 33, 0.58), rgba(15, 13, 27, 0.94));
+}
+
+.order-column-preparing {
+  border-color: rgba(127, 231, 255, 0.28);
+  background: linear-gradient(180deg, rgba(15, 41, 56, 0.58), rgba(15, 13, 27, 0.94));
+}
+
+.order-column-cancelled {
+  border-color: rgba(255, 116, 143, 0.3);
+  background: linear-gradient(180deg, rgba(54, 18, 31, 0.56), rgba(15, 13, 27, 0.94));
+}
+
+.order-column-neutral {
+  background: linear-gradient(180deg, rgba(29, 26, 50, 0.85), rgba(15, 13, 27, 0.94));
+}
+
+.order-card {
+  margin-bottom: 0.85rem;
+  padding: 1rem;
+}
+
+.order-card:last-child {
+  margin-bottom: 0;
+}
+
+/* Sombras coloreadas según estado del pedido para visual feedback. */
+.order-pending {
+  box-shadow: 0 16px 40px rgba(255, 191, 95, 0.12);
+}
+
+/* Pedido pagado: Sombra verde. */
+.order-paid {
+  box-shadow: 0 16px 40px rgba(54, 212, 139, 0.12);
+}
+
+/* En preparación: Sombra cyan. */
+.order-preparing {
+  box-shadow: 0 16px 40px rgba(127, 231, 255, 0.12);
+}
+
+/* Cancelado: Sombra roja. */
+.order-cancelled {
+  box-shadow: 0 16px 40px rgba(255, 116, 143, 0.12);
+}
+
+/* Estado neutral: Sombra blanca suave. */
+.order-neutral {
+  box-shadow: 0 16px 40px rgba(255, 255, 255, 0.06);
+}
+
+.order-id {
+  font-family: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.order-items {
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order-items li + li {
+  margin-top: 0.45rem;
+}
+
+.order-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.empty-state {
+  padding: 1.2rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.section-divider {
+  border-color: rgba(255, 255, 255, 0.08);
+  opacity: 1;
+}
+
+.status-line {
+  min-height: 2.75rem;
+}
+
+/* Elemento sticky con margen y z-index para flotar sin ocultar contenido. */
+.sticky-top-soft {
+  position: sticky;
+  top: 1rem;
+  z-index: 4;
+}
+
+/* RESPONSIVE: Ajustes para tablet (máximo 991px). */
+@media (max-width: 991px) {
+  /* Título hero más pequeño en tablet: fluido entre 2.2rem-4rem. */
+  .hero-title {
+    font-size: clamp(2.2rem, 9vw, 4rem);
   }
 }
 
-@media (max-width: 600px) {
-  .pay-box,
-  .pay-form {
-    grid-template-columns: 1fr;
+/* RESPONSIVE: Ajustes para móvil (máximo 576px). */
+@media (max-width: 576px) {
+  /* Contenedor más compacto en móvil con margen mínimo. */
+  .container-aurora {
+    width: min(100% - 1rem, 1200px);
   }
 
-  .pay-form .span-2 {
-    grid-column: auto;
+  /* Bordes menos redondeados en móvil para mejor uso de espacio. */
+  .hero-panel,
+  .surface-card,
+  .mini-card,
+  .menu-card,
+  .order-card,
+  .order-column,
+  .empty-state {
+    border-radius: 20px;
   }
 }
